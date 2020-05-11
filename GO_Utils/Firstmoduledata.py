@@ -1,32 +1,35 @@
-import Utils
+from . import Utils
 import idautils
 import struct
 
+
 def findFirstModuleData(addr, bt):
-	possible_addr = [x for x in idautils.XrefsTo(addr)]
-	for p_a in possible_addr:
-		if Utils.is_hardcoded_slice(p_a.frm, bt):
-			return p_a.frm
-	return None
+    possible_addr = [x for x in idautils.XrefsTo(addr)]
+    for p_a in possible_addr:
+        if Utils.is_hardcoded_slice(p_a.frm, bt):
+            return p_a.frm
+    return None
+
 
 def isGo17(addr, bt):
     addr += bt.size * 27
-    addr2 = addr + bt.size * 6 # for go1.7 this addr will be for modulename 
+    addr2 = addr + bt.size * 6  # for go1.7 this addr will be for modulename
     return Utils.is_hardcoded_slice(addr, bt) and (not Utils.is_hardcoded_slice(addr2, bt))
 
 
 def isGo18_10(addr, bt):
     addr += bt.size * 27
-    addr2 = addr + bt.size * 6 # for go1.8 this addr will be for itablinks 
+    addr2 = addr + bt.size * 6  # for go1.8 this addr will be for itablinks
     return Utils.is_hardcoded_slice(addr, bt) and (Utils.is_hardcoded_slice(addr2, bt))
+
 
 def getTypeinfo17(addr, bt):
     addr2 = addr + bt.size * 25
     robase = bt.ptr(addr2)
     addr += bt.size * 27
     beg = bt.ptr(addr)
-    size = bt.ptr(addr+bt.size)
-    return beg, beg+size*4, robase
+    size = bt.ptr(addr + bt.size)
+    return beg, beg + size * 4, robase
 
 
 def getTypeinfo18(addr, bt):
@@ -34,16 +37,17 @@ def getTypeinfo18(addr, bt):
     robase = bt.ptr(addr2)
     addr += bt.size * 30
     beg = bt.ptr(addr)
-    size = bt.ptr(addr+bt.size)
-    return beg, beg+size*4, robase
+    size = bt.ptr(addr + bt.size)
+    return beg, beg + size * 4, robase
 
 
 def getTypeinfo(addr, bt):
     addr += bt.size * 25
     beg = bt.ptr(addr)
-    size = bt.ptr(addr+bt.size)
+    size = bt.ptr(addr + bt.size)
 
-    return beg, beg+size*bt.size
+    return beg, beg + size * bt.size
+
 
 """
 1.10 - same as 1.10

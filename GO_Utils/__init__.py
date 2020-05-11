@@ -1,19 +1,19 @@
 import idaapi
-import Gopclntab
-import Utils
-import Firstmoduledata
-import Types
+from . import Gopclntab
+from . import Utils
+from . import Firstmoduledata
+from . import Types
 import idc
 import idautils
 import ida_ida
 import ida_search
 
+
 class GoSettings(object):
-
-
     def __init__(self):
         self.storage = {}
         self.bt_obj = Utils.get_bitness(ida_ida.inf_get_min_ea())
+        # self.bt_obj = Utils.get_bitness(idc.BeginEA()) 7.2
         self.structCreator = Utils.StructCreator(self.bt_obj)
         self.processor = None
         self.typer = None
@@ -57,31 +57,31 @@ class GoSettings(object):
     def getVersionByString(self):
         # pos = idautils.Functions().next()
         end_ea = idc.get_segm_end(0)
-        
+
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 31 33", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.13'
+            return "Go 1.13"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 31 32", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.12'
+            return "Go 1.12"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 31 31", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.11'
+            return "Go 1.11"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 31 30", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.10'
+            return "Go 1.10"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 39", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.9'
+            return "Go 1.9"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 38", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.8'
+            return "Go 1.8"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 37", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.7'
+            return "Go 1.7"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 36", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.6'
+            return "Go 1.6"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 35", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.5'
+            return "Go 1.5"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 34", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.4'
+            return "Go 1.4"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 33", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.3'
+            return "Go 1.3"
         if ida_search.find_binary(0, end_ea, "67 6f 31 2e 32", 16, idc.SEARCH_DOWN) != idc.BADADDR:
-            return 'Go 1.2'
+            return "Go 1.2"
 
     def createTyper(self, typ):
         if typ == 0:
@@ -94,9 +94,9 @@ class GoSettings(object):
             self.typer = Types.Go16Types(self.structCreator)
         elif typ == 4 or typ == 5:
             self.typer = Types.Go17Types(self.structCreator)
-        elif typ == 6: #1.9
+        elif typ == 6:  # 1.9
             self.typer = Types.Go17Types(self.structCreator)
-        elif typ == 7: #1.10
+        elif typ == 7:  # 1.10
             self.typer = Types.Go17Types(self.structCreator)
 
     def typesModuleData(self, typ):
@@ -125,7 +125,7 @@ class GoSettings(object):
         else:
             beg, end = Firstmoduledata.getTypeinfo(fmd, self.bt_obj)
             self.processor = Types.TypeProcessing(beg, end, self.bt_obj, self)
-        print "%x %x %x" % (beg, end, robase)
+        print("%x %x %x" % (beg, end, robase))
         for i in self.processor:
             pass
         return

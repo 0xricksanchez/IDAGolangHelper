@@ -1,83 +1,89 @@
-import Utils
+from . import Utils
 import ida_bytes
 import ida_struct
 import idc
 
+
 class GoTypes_BASE(object):
     def __init__(self, creator):
         self.standardTypes = [
-                              ("string",[("ptr","*char"), ("len", "uintptr")]),
-                              ("slice", [("data","*char"),("len", "uintptr"), ("cap", "uintptr")]),
-                              ("__iface", [("itab","*char"),("ptr","*char")])
+            ("string", [("ptr", "*char"), ("len", "uintptr")]),
+            ("slice", [("data", "*char"), ("len", "uintptr"), ("cap", "uintptr")]),
+            ("__iface", [("itab", "*char"), ("ptr", "*char")]),
         ]
 
         self.commonTypes = [
-                              ("arrayType",[
-                                  ("type", "type"),
-                                  ("elem", "*type"),
-                                  ("slice", "*type"),
-                                  ("len", "uintptr")
-                              ]),
-                              ("chanType", [
-                                  ("type", "type"),
-                                  ("elem", "*type"),
-                                  ("dir", "uintptr")
-                              ]),
-                              ("ptrType", [
-                                  ("type", "type"),
-                                  ("elem", "*type")
-                              ]),
-                              ("sliceType", [
-                                  ("type", "type"),
-                                  ("elem", "*type")
-                              ])
+            ("arrayType", [("type", "type"), ("elem", "*type"), ("slice", "*type"), ("len", "uintptr")]),
+            ("chanType", [("type", "type"), ("elem", "*type"), ("dir", "uintptr")]),
+            ("ptrType", [("type", "type"), ("elem", "*type")]),
+            ("sliceType", [("type", "type"), ("elem", "*type")]),
         ]
         self.standardEnums = [
-            ("kind",[
-            "INVALID", "BOOL","INT","INT8",
-            "INT16","INT32","INT64","UINT",
-            "UINT8","UINT16","UINT32","UINT64",
-            "UINTPTR","FLOAT32","FLOAT64","COMPLEX64",
-            "COMPLEX128","ARRAY","CHAN","FUNC","INTERFACE","MAP","PTR","SLICE",
-            "STRING","STRUCT","UNSAFE_PTR"
-            ])
+            (
+                "kind",
+                [
+                    "INVALID",
+                    "BOOL",
+                    "INT",
+                    "INT8",
+                    "INT16",
+                    "INT32",
+                    "INT64",
+                    "UINT",
+                    "UINT8",
+                    "UINT16",
+                    "UINT32",
+                    "UINT64",
+                    "UINTPTR",
+                    "FLOAT32",
+                    "FLOAT64",
+                    "COMPLEX64",
+                    "COMPLEX128",
+                    "ARRAY",
+                    "CHAN",
+                    "FUNC",
+                    "INTERFACE",
+                    "MAP",
+                    "PTR",
+                    "SLICE",
+                    "STRING",
+                    "STRUCT",
+                    "UNSAFE_PTR",
+                ],
+            )
         ]
         creator.createTypes(self.standardTypes)
         creator.createEnums(self.standardEnums)
 
 
 class GoTypes_l7(GoTypes_BASE):
-
     def __init__(self, creator):
         super(GoTypes_l7, self).__init__(creator)
         self.standardTypes = [
-                              ("uncommonType", [("name", "*string"), ("pkgPath", "*string"), ("methods", "slice")]),
+            ("uncommonType", [("name", "*string"), ("pkgPath", "*string"), ("methods", "slice")]),
         ]
-        #this types depends on type structure so should be created after
+        # this types depends on type structure so should be created after
         self.commonTypes += [
-                            ("method__", [("name", "*string"),("pkgPath","*string"),("mtype","*type"),("typ","*type"),("ifn", "void *"),("tfn","void *")]),
-                            ("structField",[
-                                    ("Name",   "*string"),
-                                    ("PkgPath","*string"),
-                                    ("typ", "*type"),
-                                    ("tag", "*string"),
-                                    ("offset", "uintptr"),
-                              ]),
-                              ("structType", [
-                                    ("type","type"),
-                                    ("fields", "slice")
-                              ]),
-                              ("imethod", [
-                                  ("name", "*string"),
-                                  ("pkgPath", "*string"),
-                                  ("typ", "*type")
-                              ]),
-                              ("interfaceType",[
-                                  ("type", "type"),
-                                  ("methods", "slice")
-                              ]),
-                              ("funcType",[("type","type")]), #TODO:fix
-                             ]
+            (
+                "method__",
+                [
+                    ("name", "*string"),
+                    ("pkgPath", "*string"),
+                    ("mtype", "*type"),
+                    ("typ", "*type"),
+                    ("ifn", "void *"),
+                    ("tfn", "void *"),
+                ],
+            ),
+            (
+                "structField",
+                [("Name", "*string"), ("PkgPath", "*string"), ("typ", "*type"), ("tag", "*string"), ("offset", "uintptr"),],
+            ),
+            ("structType", [("type", "type"), ("fields", "slice")]),
+            ("imethod", [("name", "*string"), ("pkgPath", "*string"), ("typ", "*type")]),
+            ("interfaceType", [("type", "type"), ("methods", "slice")]),
+            ("funcType", [("type", "type")]),  # TODO:fix
+        ]
         creator.createTypes(self.standardTypes)
 
 
@@ -85,167 +91,170 @@ class Go17Types(GoTypes_BASE):
     def __init__(self, creator):
         super(Go17Types, self).__init__(creator)
         self.standardTypes = [
-            ("type", [
-                ("size",        "uintptr"),
-                ("ptrdata",     "uintptr"),
-                ("hash",        "__int32"),
-                ("flag",        "__int8"),
-                ("align",       "__int8"),
-                ("fieldAlign",  "__int8"),
-                ("kind",        "kind"),
-                ("alg",         "*void"),
-                ("gcdata",      "*unsigned char"),
-                ("string",      "__int32"),
-                ("ptrtothis",   "__int32"),
-           ])
+            (
+                "type",
+                [
+                    ("size", "uintptr"),
+                    ("ptrdata", "uintptr"),
+                    ("hash", "__int32"),
+                    ("flag", "__int8"),
+                    ("align", "__int8"),
+                    ("fieldAlign", "__int8"),
+                    ("kind", "kind"),
+                    ("alg", "*void"),
+                    ("gcdata", "*unsigned char"),
+                    ("string", "__int32"),
+                    ("ptrtothis", "__int32"),
+                ],
+            )
         ]
 
-        #this types depends on type structure so should be created after
+        # this types depends on type structure so should be created after
         self.commonTypes += [
-            ("uncommonType", [("pkgPath", "__int32"), ("mcount", "__int16"), ("unused1", "__int16"),("moff", "__int32"), ("unused2", "__int16")]),
-            ("method__", [("name", "__int32"), ("mtyp", "__int32"),("ifn","__int32"), ("tfn", "__int32")]),
-                            ("structField",[
-                                    ("Name",   "void *"),
-                                    ("typ", "*type"),
-                                    ("offset", "uintptr"),
-                              ]),
-                              ("structType", [
-                                    ("type","type"),
-                                    ("pkgPath", "void *"),
-                                    ("fields", "slice")
-                              ]),
-                              ("imethod", [
-                                  ("name", "__int32"),
-                                  ("pkgPath", "__int32"),
-                              ]),
-                              ("interfaceType",[
-                                  ("type", "type"),
-                                  ("pkgPath", "void *"),
-                                  ("methods", "slice")
-                              ]),
-                              ("funcType", [
-                                  ("type", "type"),
-                                  ("incount","__int16"),
-                                  ("outcount", "__int16")
-                              ]),
-                              ("mapType", [
-                                  ("type", "type"),
-                                  ("key","*type"),
-                                  ("elem","*type"),
-                                  ("bucket", "*type"),
-                                  ("hmap", "*type"),
-                                  ("keysize","__int8"),
-                                  ("indirectkey","__int8"),
-                                  ("valuesize","__int8"),
-                                  ("indirectvalue","__int8"),
-                                  ("bucketsize","__int16"),
-                                  ("reflexivekey","__int8"),
-                                  ("needkeyupdate","__int8"),
-                              ])
-                             ]
+            (
+                "uncommonType",
+                [
+                    ("pkgPath", "__int32"),
+                    ("mcount", "__int16"),
+                    ("unused1", "__int16"),
+                    ("moff", "__int32"),
+                    ("unused2", "__int16"),
+                ],
+            ),
+            ("method__", [("name", "__int32"), ("mtyp", "__int32"), ("ifn", "__int32"), ("tfn", "__int32")]),
+            ("structField", [("Name", "void *"), ("typ", "*type"), ("offset", "uintptr"),]),
+            ("structType", [("type", "type"), ("pkgPath", "void *"), ("fields", "slice")]),
+            ("imethod", [("name", "__int32"), ("pkgPath", "__int32"),]),
+            ("interfaceType", [("type", "type"), ("pkgPath", "void *"), ("methods", "slice")]),
+            ("funcType", [("type", "type"), ("incount", "__int16"), ("outcount", "__int16")]),
+            (
+                "mapType",
+                [
+                    ("type", "type"),
+                    ("key", "*type"),
+                    ("elem", "*type"),
+                    ("bucket", "*type"),
+                    ("hmap", "*type"),
+                    ("keysize", "__int8"),
+                    ("indirectkey", "__int8"),
+                    ("valuesize", "__int8"),
+                    ("indirectvalue", "__int8"),
+                    ("bucketsize", "__int16"),
+                    ("reflexivekey", "__int8"),
+                    ("needkeyupdate", "__int8"),
+                ],
+            ),
+        ]
 
         creator.createTypes(self.standardTypes)
         creator.createTypes(self.commonTypes)
 
 
 class Go12Types(GoTypes_l7):
-
     def __init__(self, creator):
         super(Go12Types, self).__init__(creator)
         self.types = [
-            ("type", [
-                ("size",       "uintptr"),
-                ("hash",       "__int32"),
-                ("_unused",    "__int8"),
-                ("align",      "__int8"),
-                ("fieldAlign", "__int8"),
-                ("kind",       "kind"),
-                ("alg",        "*void"),
-                ("gc",         "void *"),
-                ("string",     "*string"),
-                ("UncommonType","*int"),
-                ("ptrtothis",   "*type"),
-            ]),
+            (
+                "type",
+                [
+                    ("size", "uintptr"),
+                    ("hash", "__int32"),
+                    ("_unused", "__int8"),
+                    ("align", "__int8"),
+                    ("fieldAlign", "__int8"),
+                    ("kind", "kind"),
+                    ("alg", "*void"),
+                    ("gc", "void *"),
+                    ("string", "*string"),
+                    ("UncommonType", "*int"),
+                    ("ptrtothis", "*type"),
+                ],
+            ),
         ]
         creator.createTypes(self.types)
         creator.createTypes(self.commonTypes)
 
 
 class Go14Types(GoTypes_l7):
-
     def __init__(self, creator):
         super(Go14Types, self).__init__(creator)
         self.types = [
-           ("type", [
-                ("size",        "uintptr"),
-                ("hash",        "__int32"),
-                ("_unused",     "__int8"),
-                ("align",       "__int8"),
-                ("fieldAlign",  "__int8"),
-                ("kind",        "kind"),
-                ("alg",         "*void"),
-                ("gcdata",      "void *[2]"),
-                ("string",      "*string"),
-                ("UncommonType","*uncommonType"),
-                ("ptrtothis",   "*type"),
-                ("zero",        "void *")
-           ]),
+            (
+                "type",
+                [
+                    ("size", "uintptr"),
+                    ("hash", "__int32"),
+                    ("_unused", "__int8"),
+                    ("align", "__int8"),
+                    ("fieldAlign", "__int8"),
+                    ("kind", "kind"),
+                    ("alg", "*void"),
+                    ("gcdata", "void *[2]"),
+                    ("string", "*string"),
+                    ("UncommonType", "*uncommonType"),
+                    ("ptrtothis", "*type"),
+                    ("zero", "void *"),
+                ],
+            ),
         ]
         creator.createTypes(self.types)
         creator.createTypes(self.commonTypes)
 
 
 class Go15Types(GoTypes_l7):
-
     def __init__(self, creator):
         super(Go15Types, self).__init__(creator)
         self.types = [
-           ("type", [
-                ("size",        "uintptr"),
-                ("ptrdata",     "uintptr"),
-                ("hash",        "__int32"),
-                ("_unused",     "__int8"),
-                ("align",       "__int8"),
-                ("fieldAlign",  "__int8"),
-                ("kind",        "kind"),
-                ("alg",         "*void"),
-                ("gcdata",      "*unsigned char"),
-                ("string",      "*string"),
-                ("UncommonType","*uncommonType"),
-                ("ptrtothis",   "*type"),
-                ("zero",        "void *")
-           ])
+            (
+                "type",
+                [
+                    ("size", "uintptr"),
+                    ("ptrdata", "uintptr"),
+                    ("hash", "__int32"),
+                    ("_unused", "__int8"),
+                    ("align", "__int8"),
+                    ("fieldAlign", "__int8"),
+                    ("kind", "kind"),
+                    ("alg", "*void"),
+                    ("gcdata", "*unsigned char"),
+                    ("string", "*string"),
+                    ("UncommonType", "*uncommonType"),
+                    ("ptrtothis", "*type"),
+                    ("zero", "void *"),
+                ],
+            )
         ]
         creator.createTypes(self.types)
         creator.createTypes(self.commonTypes)
 
 
 class Go16Types(GoTypes_l7):
-
     def __init__(self, creator):
         super(Go16Types, self).__init__(creator)
         self.types = [
-           ("type", [
-                ("size",        "uintptr"),
-                ("ptrdata",     "uintptr"),
-                ("hash",        "__int32"),
-                ("_unused",     "__int8"),
-                ("align",       "__int8"),
-                ("fieldAlign",  "__int8"),
-                ("kind",        "kind"),
-                ("alg",         "*void"),
-                ("gcdata",      "*unsigned char"),
-                ("string",      "*string"),
-                ("UncommonType","*uncommonType"),
-                ("ptrtothis",   "*type"),
-           ])
+            (
+                "type",
+                [
+                    ("size", "uintptr"),
+                    ("ptrdata", "uintptr"),
+                    ("hash", "__int32"),
+                    ("_unused", "__int8"),
+                    ("align", "__int8"),
+                    ("fieldAlign", "__int8"),
+                    ("kind", "kind"),
+                    ("alg", "*void"),
+                    ("gcdata", "*unsigned char"),
+                    ("string", "*string"),
+                    ("UncommonType", "*uncommonType"),
+                    ("ptrtothis", "*type"),
+                ],
+            )
         ]
         creator.createTypes(self.types)
         creator.createTypes(self.commonTypes)
 
 
 class TypeProcessing(object):
-
     def __init__(self, pos, endpos, step, settings):
         self.pos = pos
         self.end = endpos
@@ -257,17 +266,16 @@ class TypeProcessing(object):
             "ARRAY": self.makeArrType,
             "SLICE": self.makeSliceType,
             "STRUCT": self.makeStructType,
-            "PTR"  : self.makePtrType,
+            "PTR": self.makePtrType,
             "INTERFACE": self.makeInterface,
-            "FUNC":  self.makeFunc,
+            "FUNC": self.makeFunc,
             "MAP": self.makeMap,
         }
-
 
     def __iter__(self):
         return self
 
-    def next(self):
+    def __next__(self):
         if self.pos >= self.end:
             raise StopIteration
         value = self.stepper.ptr(self.pos)
@@ -276,11 +284,11 @@ class TypeProcessing(object):
 
     def getDword(self, sid, addr, name):
         name_off = idc.get_member_offset(sid, name)
-        return idc.get_wide_dword(addr+name_off)
+        return idc.get_wide_dword(addr + name_off)
 
     def getPtr(self, sid, addr, name):
         name_off = idc.get_member_offset(sid, name)
-        return self.stepper.ptr(addr+name_off)
+        return self.stepper.ptr(addr + name_off)
 
     def getPtrToThis(self, sid, offset):
         return self.getPtr(sid, offset, "ptrtothis")
@@ -291,10 +299,9 @@ class TypeProcessing(object):
     def make_arr(self, addr, arr_size, struc_size, type):
         res = idc.make_array(addr, arr_size)
         if res == False:
-            ida_bytes.del_items(addr, arr_size*struc_size, ida_bytes.DELIT_SIMPLE)
+            ida_bytes.del_items(addr, arr_size * struc_size, ida_bytes.DELIT_SIMPLE)
             idc.SetType(addr, type)
             idc.make_array(addr, arr_size)
-
 
     def getName(self, offset):
         sid = ida_struct.get_struc_id("type")
@@ -305,27 +312,29 @@ class TypeProcessing(object):
         return idc.GetString(name)
 
     def getKindEnumName(self, addr):
-        struc_id = ida_struct.get_struc_id("type")
-        offset_kind = idc.get_member_offset(struc_id, "kind")
-        kind = idc.get_wide_byte(addr + offset_kind) & 0x1f
-        return self.settings.typer.standardEnums[0][1][kind]
-
+        try:
+            struc_id = ida_struct.get_struc_id("type")
+            offset_kind = idc.get_member_offset(struc_id, "kind")
+            kind = idc.get_wide_byte(addr + offset_kind) & 0x1F
+            return self.settings.typer.standardEnums[0][1][kind]
+        except IndexError as e:
+            pass
 
     def handle_offset(self, offset):
-        #Check if we already parse this
+        # Check if we already parse this
         if offset in self.type_addr:
             return
-        print "Processing: %x" % offset
+        print("Processing: %x" % offset)
         self.type_addr.append(offset)
 
-        #Set type and get name
+        # Set type and get name
         idc.SetType(offset, "type")
         name = self.getName(offset)
         idc.set_cmt(offset, name, 0)
 
-        #get kind name
+        # get kind name
         kind_name = self.getKindEnumName(offset)
-        print kind_name
+        print(kind_name)
         if name[0] == "*" and kind_name != "PTR":
             name = name[1:]
         name = Utils.relaxName(name)
@@ -380,7 +389,7 @@ class TypeProcessing(object):
         addr = self.stepper.ptr(offset_elem + offset + inner_offset)
 
         inner_offset = idc.get_member_offset(slice_id, "len")
-        size = self.stepper.ptr(offset+offset_elem+inner_offset)
+        size = self.stepper.ptr(offset + offset_elem + inner_offset)
         if size == 0:
             return
         idc.SetType(addr, "structField")
@@ -388,8 +397,8 @@ class TypeProcessing(object):
         self.make_arr(addr, size, sz, "structField")
         sid_type = ida_struct.get_struc_id("type")
         size_new_struct = self.getPtr(sid_type, offset, "size")
-        for i in xrange(size):
-            self.processStructField(addr, i*sz)
+        for i in range(size):
+            self.processStructField(addr, i * sz)
         name = self.getName(offset)
         name = Utils.relaxName(name)
         name = "ut_" + name
@@ -404,12 +413,11 @@ class TypeProcessing(object):
             fieldName = idc.GetString(self.stepper.ptr(ptr))
             Utils.rename(ptr, fieldName)
         ptr = self.getPtr(sid, offset, "typ")
-        self.handle_offset(ptr)    
-         
+        self.handle_offset(ptr)
 
     def getStructFieldOffset(self, sid, addr):
         return self.getPtr(sid, addr, "offset")
-        
+
     def createUserTypeStruct(self, addr, name, size, self_size):
         fields = []
         sid = ida_struct.get_struc_id("structField")
@@ -418,18 +426,18 @@ class TypeProcessing(object):
         fields = []
         curr_offset = 0
         idc.set_cmt(addr, name, 0)
-        for i in xrange(size):
-            fieldname = self.nameFromOffset(self.getPtr(sid, addr+i*sz,"Name"))
-            type_addr = self.getPtr(sid, addr+i*sz, "typ")
+        for i in range(size):
+            fieldname = self.nameFromOffset(self.getPtr(sid, addr + i * sz, "Name"))
+            type_addr = self.getPtr(sid, addr + i * sz, "typ")
             typename = self.getType(type_addr)
             size = self.getPtr(sid_type, type_addr, "size")
             if fieldname == "" or fieldname is None:
-                fieldname = "unused_"+Utils.id_generator()
-            offset = self.getStructFieldOffset(sid, addr+i*sz)
+                fieldname = "unused_" + Utils.id_generator()
+            offset = self.getStructFieldOffset(sid, addr + i * sz)
             if offset != curr_offset:
-                print "Offset missmatch.Got %d expected %d. Adding padding..." % (curr_offset, offset)
+                print("Offset missmatch.Got %d expected %d. Adding padding..." % (curr_offset, offset))
                 if offset < curr_offset:
-                    raise("Too many bytes already")
+                    raise ("Too many bytes already")
                 while offset != curr_offset:
                     fields.append(("padding", "char"))
                     curr_offset += 1
@@ -437,14 +445,14 @@ class TypeProcessing(object):
             if size != 0:
                 offset_kind = idc.get_member_offset(sid_type, "kind")
                 kind_of_type = self.getKindEnumName(type_addr)
-                print kind_of_type
-                if kind_of_type == "STRUCT_": #Disabled for now
+                print(kind_of_type)
+                if kind_of_type == "STRUCT_":  # Disabled for now
                     name_type = self.getName(type_addr)
                     while name_type[0] == "*":
                         name_type = name_type[1:]
                     name_type = Utils.relaxName(name_type)
                     name_type = "ut_" + name_type
-                    #print "setting type %s" % name_type
+                    # print "setting type %s" % name_type
                     fields.append((fieldname, name_type))
                 elif kind_of_type == "STRING":
                     fields.append((fieldname, "string"))
@@ -455,22 +463,22 @@ class TypeProcessing(object):
                 else:
                     fields.append((fieldname, "char [%d]" % size))
         if curr_offset != self_size:
-            print "%x: Structure size mismatch: %x" % (addr, curr_offset)
+            print("%x: Structure size mismatch: %x" % (addr, curr_offset))
             if self_size < curr_offset:
-                    raise("Too many bytes already")
+                raise ("Too many bytes already")
             while self_size != curr_offset:
                 fields.append(("padding", "char"))
-                curr_offset += 1    
+                curr_offset += 1
         new_type = [(name, fields)]
         self.settings.structCreator.createTypes(new_type)
         new_type_sid = ida_struct.get_struc_id(name)
         sz = ida_struct.get_struc_size(new_type_sid)
         if sz != self_size:
-            print "%x" % addr   
-            raise("Error at creating structure")
-    
+            print("%x" % addr)
+            raise ("Error at creating structure")
+
     def getType(self, addr):
-        print "%x" % addr
+        print("%x" % addr)
         sid = ida_struct.get_struc_id("type")
         name = self.getName(addr)
         if self.getKindEnumName(addr) != "PTR":
@@ -500,8 +508,7 @@ class TypeProcessing(object):
             name = Utils.relaxName(name)
             name = "user_interface_" + name
             # TODO: this is for go1.7 need additional check for other versions
-            fields = [("inter", "void *"), ("type", "void *"), ("link", "void *"), ("bad", "__int32"),
-                      ("unused", "__int32")]
+            fields = [("inter", "void *"), ("type", "void *"), ("link", "void *"), ("bad", "__int32"), ("unused", "__int32")]
             for i in names:
                 fields.append((i, "void *"))
             itype = [(name, fields)]
@@ -522,12 +529,11 @@ class TypeProcessing(object):
 
 
 class TypeProcessing17(TypeProcessing):
-
     def __init__(self, pos, endpos, step, settings, base_type):
         super(TypeProcessing17, self).__init__(pos, endpos, step, settings)
         self.robase = base_type
 
-    def next(self):
+    def __next__(self):
         if self.pos >= self.end:
             raise StopIteration
         value = idc.get_wide_dword(self.pos)
@@ -538,18 +544,17 @@ class TypeProcessing17(TypeProcessing):
     def getOffset(self, offset):
         return self.robase + offset
 
-
     def get_str(self, pos, len):
         out = ""
-        for i in xrange(len):
-            out += chr(idc.get_wide_byte(pos+i))
+        for i in range(len):
+            out += chr(idc.get_wide_byte(pos + i))
         return out
 
     def getName(self, offset):
         sid = ida_struct.get_struc_id("type")
         name_off = self.getDword(sid, offset, "string")
         string_addr = self.getOffset(name_off) + 3
-        ln = idc.get_wide_byte(string_addr-1)
+        ln = idc.get_wide_byte(string_addr - 1)
         return self.get_str(string_addr, ln)
 
     def nameFromOffset(self, offset):
@@ -573,7 +578,7 @@ class TypeProcessing17(TypeProcessing):
     def processIMethods(self, offst, size):
         sz = ida_struct.get_struc_size(ida_struct.get_struc_id("imethod"))
         comm = []
-        for i in xrange(size):
+        for i in range(size):
             comm.append(self.processIMethod(offst + i * sz))
         idc.set_cmt(offst, "\n".join(comm), 0)
         return comm
@@ -616,15 +621,14 @@ class TypeProcessing17(TypeProcessing):
         in_size = idc.Word(offset + idc.get_member_offset(sid, "incount"))
         out_size = idc.Word(offset + idc.get_member_offset(sid, "outcount"))
         sz = ida_struct.get_struc_size(sid)
-        for i in xrange(in_size + out_size):
+        for i in range(in_size + out_size):
             idc.SetType(offset + sz + i * self.stepper.size, "type *")
 
 
 class TypeProcessing19(TypeProcessing17):
-        
     def __init__(self, pos, endpos, step, settings, base_type):
         super(TypeProcessing19, self).__init__(pos, endpos, step, settings, base_type)
         self.robase = base_type
 
     def getStructFieldOffset(self, sid, addr):
-        return (self.getPtr(sid, addr, "offset") >> 1)
+        return self.getPtr(sid, addr, "offset") >> 1
